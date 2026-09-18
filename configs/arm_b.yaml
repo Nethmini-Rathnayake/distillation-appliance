@@ -1,0 +1,12 @@
+extends: base.yaml
+
+arm: student_prompted        # B
+model_role: student
+trains: false
+
+# Identical prompt to arm A. If this block and arm_a.yaml's ever diverge,
+# A vs B stops being a like-for-like comparison.
+prompt:
+  strategy: few_shot
+  num_shots: 8
+  shot_selection: stratified

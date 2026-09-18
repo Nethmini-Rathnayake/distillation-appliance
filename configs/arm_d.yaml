@@ -1,0 +1,19 @@
+extends: base.yaml
+
+arm: student_distilled       # D
+model_role: student
+trains: true
+
+# The ONLY block that differs from arm_c.yaml. Diffing these two files must
+# show this block and nothing else, or C vs D no longer isolates distillation.
+loss:
+  kind: distillation
+  temperature: 3.0           # T
+  alpha: 0.5                 # hard-label weight; (1 - alpha) weights the KL term
+  teacher_logits: ${paths.teacher_logits}
+
+# Knobs to sweep. Not read by a single training run; consumed by the sweep
+# driver, which emits one run directory per (temperature, alpha) pair.
+sweep:
+  temperature: [1.0, 2.0, 3.0, 5.0]
+  alpha: [0.1, 0.3, 0.5, 0.7, 0.9]

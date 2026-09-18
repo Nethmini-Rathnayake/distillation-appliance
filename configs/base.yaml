@@ -1,0 +1,77 @@
+# Shared settings for every arm. Arm configs set `extends: base.yaml` and are
+# deep-merged over this file. Nothing here should ever be duplicated into an
+# arm config — override it, or it will drift.
+
+seed: 1337
+
+paths:
+  data_dir: data
+  eval_set: data/eval_frozen.parquet      # written once, then read-only
+  teacher_logits: data/teacher_logits.parquet
+  runs_dir: runs
+  model_cache: .cache/huggingface         # offline after first download
+
+dataset:
+  name: banking77
+  num_labels: 77
+  train_split: train
+  test_split: test                        # the frozen eval set
+  val_fraction: 0.2                       # carved from train, seeded above
+  text_field: text
+  label_field: label
+
+tokenizer:
+  max_seq_length: 128
+  padding: max_length
+  truncation: true
+
+# Shared across arms C and D. Anything that differs between them belongs in
+# `loss` and nowhere else.
+train:
+  batch_size: 32
+  eval_batch_size: 64
+  epochs: 5
+  learning_rate: 5.0e-5
+  weight_decay: 0.01
+  warmup_ratio: 0.06
+  max_grad_norm: 1.0
+  optimizer: adamw
+  scheduler: linear
+  fp16: true
+
+teacher:
+  checkpoint: roberta-large
+  accuracy_floor: 0.85                    # below this: stop and report
+
+student:
+  checkpoint: distilbert-base-uncased
+
+inference:
+  batch_size: 1                           # latency measured one request at a time
+  warmup_batches: 10
+  latency_samples: 500
+
+hardware:
+  dev_profile: t4
+  target_profile: macmini_small
+  profiles:
+    t4:            { memory_gb: 16,  bandwidth_gbs: 320 }
+    spark:         { memory_gb: 128, bandwidth_gbs: 273 }
+    macmini:       { memory_gb: 64,  bandwidth_gbs: 273 }
+    macmini_small: { memory_gb: 16,  bandwidth_gbs: 273 }
+
+runtime:
+  require_cuda: true                      # never silently fall back to CPU
+  offline: true                           # HF_HUB_OFFLINE after first download
+
+metrics:
+  report:
+    - accuracy
+    - macro_f1
+    - ece
+    - latency_p50_ms
+    - latency_p95_ms
+    - input_tokens
+    - model_size_bytes
+    - peak_memory_bytes
+  ece_bins: 15

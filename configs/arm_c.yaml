@@ -1,0 +1,10 @@
+extends: base.yaml
+
+arm: student_hard            # C
+model_role: student
+trains: true
+
+# The ONLY block that may differ between arm_c and arm_d.
+# Everything else — data, epochs, lr, batch size, seed — comes from base.yaml.
+loss:
+  kind: hard

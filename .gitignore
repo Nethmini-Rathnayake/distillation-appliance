@@ -1,0 +1,36 @@
+# Run outputs — keep the directory, ignore its contents
+runs/*
+!runs/.gitkeep
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+
+# Environments
+.venv/
+venv/
+env/
+
+# Model and dataset caches
+.cache/
+~/.cache/huggingface/
+huggingface/
+transformers_cache/
+*.safetensors
+*.bin
+*.pt
+*.ckpt
+
+# Derived data (regenerable, and eval/teacher artefacts must not be committed)
+data/
+*.parquet
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/

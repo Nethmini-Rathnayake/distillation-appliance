@@ -1,0 +1,41 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "factory"
+version = "0.1.0"
+description = "Air-gapped appliance distillation prototype: teacher/student arms over banking77."
+requires-python = ">=3.11"
+license = { text = "Proprietary" }
+
+dependencies = [
+    "torch>=2.2",
+    "transformers>=4.40",
+    "datasets>=2.19",
+    "evaluate>=0.4",
+    "peft>=0.10",
+    "scikit-learn>=1.4",
+    "pyyaml>=6.0",
+    # runs/<ts>_<arm>/predictions.parquet
+    "pyarrow>=15.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.4",
+]
+
+[project.scripts]
+factory = "factory.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["factory"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

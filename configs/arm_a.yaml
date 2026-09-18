@@ -1,0 +1,10 @@
+extends: base.yaml
+
+arm: teacher_prompted        # A
+model_role: teacher
+trains: false
+
+prompt:
+  strategy: few_shot
+  num_shots: 8
+  shot_selection: stratified   # seeded from base.seed
